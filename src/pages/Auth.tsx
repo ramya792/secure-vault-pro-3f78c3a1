@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { PasswordStrengthMeter } from '@/components/PasswordStrengthMeter';
-import { Shield, Mail, Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { Shield, Mail, Lock, User, Eye, EyeOff, Loader2, ArrowLeft, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -86,22 +87,38 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-background gradient-mesh p-4 relative overflow-hidden">
+      {/* Floating shapes */}
+      <div className="absolute top-1/4 left-10 w-72 h-72 bg-primary/30 rounded-full blur-[100px] animate-float" />
+      <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-pink-500/20 rounded-full blur-[120px] animate-float" style={{ animationDelay: '2s' }} />
+      
+      {/* Top bar */}
+      <div className="fixed top-0 left-0 right-0 p-4 flex items-center justify-between z-10">
+        <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          <span className="text-sm">Back</span>
+        </Link>
+        <ThemeToggle />
+      </div>
+
+      <div className="w-full max-w-md animate-fade-in relative z-10">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-primary-foreground mb-4">
-            <Shield className="h-8 w-8" />
+          <div className="flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary mb-4 shadow-glow">
+            <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">PersonalManager</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Secure your digital life
-          </p>
+          <div className="text-center">
+            <h1 className="text-2xl font-display font-bold text-foreground">Personal Manager</h1>
+            <p className="text-muted-foreground text-sm mt-1 flex items-center justify-center gap-1">
+              <Sparkles className="h-3 w-3" />
+              Secure your digital life
+            </p>
+          </div>
         </div>
 
-        <Card variant="elevated">
+        <Card className="glass border-0 shadow-premium-xl">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="text-xl">
+            <CardTitle className="text-xl font-display">
               {isSignUp ? 'Create your account' : 'Welcome back'}
             </CardTitle>
             <CardDescription>
@@ -123,7 +140,7 @@ export default function Auth() {
                       placeholder="John Doe"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 h-11 glass border-border/50"
                       disabled={isLoading}
                     />
                   </div>
@@ -143,7 +160,7 @@ export default function Auth() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-11 glass border-border/50"
                     disabled={isLoading}
                   />
                 </div>
@@ -162,7 +179,7 @@ export default function Auth() {
                     placeholder={isSignUp ? 'Create a strong password' : 'Enter your password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 h-11 glass border-border/50"
                     disabled={isLoading}
                   />
                   <button
@@ -181,14 +198,12 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                variant="premium"
-                className="w-full"
-                size="lg"
+                className="w-full h-11 gradient-primary text-white border-0 shadow-glow hover:opacity-90"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     {isSignUp ? 'Creating account...' : 'Signing in...'}
                   </>
                 ) : (
@@ -214,7 +229,8 @@ export default function Auth() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
+        <p className="text-center text-xs text-muted-foreground mt-6 flex items-center justify-center gap-1">
+          <Lock className="h-3 w-3" />
           Your data is encrypted end-to-end. Only you can access it.
         </p>
       </div>

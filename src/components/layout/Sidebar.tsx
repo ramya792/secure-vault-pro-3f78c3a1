@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   Shield,
   Key,
@@ -14,7 +15,8 @@ import {
   Settings,
   ChevronLeft,
   Menu,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -48,7 +50,7 @@ export function Sidebar() {
       {/* Mobile toggle button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed top-4 left-4 z-50 p-2.5 rounded-xl bg-card shadow-premium-md lg:hidden border border-border"
+        className="fixed top-4 left-4 z-50 p-2.5 rounded-xl glass shadow-premium-md lg:hidden hover-glow"
         aria-label="Open menu"
       >
         <Menu className="h-5 w-5 text-foreground" />
@@ -57,7 +59,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -65,9 +67,9 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-50 h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col',
+          'fixed left-0 top-0 z-50 h-screen bg-sidebar/95 backdrop-blur-xl border-r border-sidebar-border transition-all duration-300 flex flex-col',
           // Mobile: slide in/out
-          mobileOpen ? 'translate-x-0' : '-translate-x-full',
+          mobileOpen ? 'translate-x-0 animate-slide-in-left' : '-translate-x-full',
           // Desktop: always visible, can collapse
           'lg:translate-x-0',
           desktopCollapsed ? 'lg:w-20' : 'lg:w-64',
@@ -77,8 +79,12 @@ export function Sidebar() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
           <div className={cn('flex items-center gap-3', desktopCollapsed && 'lg:justify-center lg:w-full')}>
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary-foreground shrink-0">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl gradient-primary text-white shrink-0 shadow-glow">
               <Shield className="h-5 w-5" />
+            </div>
+            <div className={cn("flex flex-col", desktopCollapsed && "lg:hidden")}>
+              <span className="font-display font-bold text-sidebar-foreground tracking-tight">Personal</span>
+              <span className="font-display font-bold gradient-primary-text -mt-1">Manager</span>
             </div>
           </div>
           
@@ -104,7 +110,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-thin">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -112,10 +118,10 @@ export function Sidebar() {
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
                   desktopCollapsed && 'lg:justify-center lg:px-0',
                   isActive
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    ? 'gradient-primary text-white shadow-glow'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )
               }
@@ -127,16 +133,27 @@ export function Sidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-sidebar-border space-y-2">
+        <div className="p-3 border-t border-sidebar-border space-y-2">
+          {/* Theme toggle */}
+          <div className={cn(
+            "flex items-center gap-3 px-3 py-2",
+            desktopCollapsed && "lg:justify-center lg:px-0"
+          )}>
+            <ThemeToggle className="h-9 w-9" />
+            <span className={cn("text-sm text-sidebar-foreground", desktopCollapsed && "lg:hidden")}>
+              Theme
+            </span>
+          </div>
+
           <NavLink
             to="/settings"
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
                 desktopCollapsed && 'lg:justify-center lg:px-0',
                 isActive
-                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                  ? 'gradient-primary text-white shadow-glow'
                   : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
               )
             }
@@ -146,11 +163,14 @@ export function Sidebar() {
           </NavLink>
 
           {profile && (
-            <div className={cn("px-3 py-2", desktopCollapsed && "lg:hidden")}>
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {profile.displayName}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
+            <div className={cn("px-3 py-2 rounded-xl bg-sidebar-accent/50", desktopCollapsed && "lg:hidden")}>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  {profile.displayName}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground truncate mt-0.5">
                 {profile.email}
               </p>
             </div>
@@ -163,7 +183,7 @@ export function Sidebar() {
               logout();
             }}
             className={cn(
-              'w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              'w-full justify-start gap-3 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive rounded-xl',
               desktopCollapsed && 'lg:justify-center lg:px-0'
             )}
           >
